@@ -138,48 +138,43 @@ function reportSpecResults(spec) {
 		return;
 	}
 
-	browser.takeScreenshot().then(function (png) {
-		browser.getCapabilities().then(function (capabilities) {
-			var descriptions = util.gatherDescriptions(
-					spec.suite
-					, [spec.description]
-				)
+	browser.getCapabilities().then(function (capabilities) {
+		var descriptions = util.gatherDescriptions(
+				spec.suite
+				, [spec.description]
+			)
 
 
-				, baseName = self.pathBuilder(
-					spec
-					, descriptions
-					, results
-					, capabilities
-				)
-				, metaData = self.metaDataBuilder(
-					spec
-					, descriptions
-					, results
-					, capabilities
-				)
+			, baseName = self.pathBuilder(
+				spec
+				, descriptions
+				, results
+				, capabilities
+			)
+			, metaData = self.metaDataBuilder(
+				spec
+				, descriptions
+				, results
+				, capabilities
+			)
 
-				, screenShotFile = baseName + '.png'
-				, metaFile = baseName + '.json'
-				, screenShotPath = path.join(self.baseDirectory, screenShotFile)
-				, metaDataPath = path.join(self.baseDirectory, metaFile)
+			, screenShotFile = baseName + '.png'
+			, metaFile = baseName + '.json'
+			, screenShotPath = path.join(self.baseDirectory, screenShotFile)
+			, metaDataPath = path.join(self.baseDirectory, metaFile)
 
-				// pathBuilder can return a subfoldered path too. So extract the
-				// directory path without the baseName
-				, directory = path.dirname(screenShotPath);
+			// pathBuilder can return a subfoldered path too. So extract the
+			// directory path without the baseName
+			, directory = path.dirname(screenShotPath);
 
-			metaData.screenShotFile = screenShotFile;
-			mkdirp(directory, function(err) {
-				if(err) {
-					throw new Error('Could not create directory ' + directory);
-				} else {
-					util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
-					if(!(self.takeScreenShotsOnlyForFailedSpecs && results.passed())) {
-						util.storeScreenShot(png, screenShotPath);
-					}	
-					util.storeMetaData(metaData, metaDataPath);
-				}
-			});
+		metaData.screenShotFile = screenShotFile;
+		mkdirp(directory, function(err) {
+			if(err) {
+				throw new Error('Could not create directory ' + directory);
+			} else {
+				util.addMetaData(metaData, metaDataPath, descriptions, self.finalOptions);
+				util.storeMetaData(metaData, metaDataPath);
+			}
 		});
 	});
 
